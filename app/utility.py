@@ -51,11 +51,11 @@ def iot_to_cv_server():
 
 
 
-def location_with_ip_address():
+def location_with_ip_address()->tuple[str, list[float]]:
     g = geocoder.ip('me')
-    print(g.latlng)
+    latlan = g.latlng
     location = g.address
-    print(location)
+    return (location, latlan)
 
   
 
