@@ -1,6 +1,8 @@
+import os
 import time
 from functools import wraps
 import cv2
+from openai import OpenAI
 import requests
 import numpy as np
 import geocoder
@@ -51,13 +53,52 @@ def iot_to_cv_server():
 
 
 
-def location_with_ip_address()->tuple[str, list[float]]:
-    g = geocoder.ip('me')
-    latlan = g.latlng
-    location = g.address
-    return (location, latlan)
+def location_with_ip_address() -> tuple[str, list[float]]:
+  """
+  Retrieves the location and latitude/longitude coordinates based on the IP address of the user.
+
+  Returns:
+    A tuple containing the location (address) and latitude/longitude coordinates.
+
+  Example:
+    >>> location_with_ip_address()
+    ('New York, NY, USA', [40.7128, -74.0060])
+  """
+  g = geocoder.ip('me')
+  latlan = g.latlng
+  location = g.address
+  return (location, latlan)
 
   
 
 def location_with_gps():
   pass
+
+
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+@cet
+def generate_audio(text: str, name: str):
+    """
+    Generates audio from the given text using the Text-to-Speech API.
+
+    Args:
+        text (str): The text to convert into audio.
+        name (str): The name of the file to save the audio as.
+
+    Returns:
+        None
+    """
+    response = client.audio.speech.create(
+        model="tts-1",
+        voice="alloy",
+        input=text,
+    )
+    
+    with client.audio.speech.with_streaming_response.create(
+    model="tts-1",
+    voice="alloy",
+    input=text
+    ) as response:
+        response.stream_to_file(f"audio/{name}.mp3")
