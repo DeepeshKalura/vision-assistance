@@ -28,7 +28,7 @@ def multimodel(base64_image: str)->str:
       {
         "role": "user",
         "content": [  
-          {"type": "text", "text": "Describe the image?"},
+          {"type": "text", "text": "You are an humble AI visual assistant we will provide you the images you have to Describe the image for a blind person."},
           {
             "type": "image_url",
             "image_url": {

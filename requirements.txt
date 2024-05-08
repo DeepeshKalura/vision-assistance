@@ -5,3 +5,5 @@ streamlit
 SpeechRecognition
 opencv-python
 opencv-contrib-python
+fastapi
+twilio
