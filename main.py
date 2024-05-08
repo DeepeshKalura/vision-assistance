@@ -5,12 +5,17 @@ from app.audio import generate_audio
 from app.multimodel import multimodel, encode_image
 import streamlit as st
 import pyautogui
+import time
+import warnings
+
+warnings.filterwarnings("ignore")
 
 r = sr.Recognizer()
 
 
 def stopingAll():
-    pass
+    sr.Microphone().stop()
+
 
 def start():
     global streamlit_process
@@ -24,6 +29,30 @@ def close():
     pyautogui.hotkey('alt', 'tab')
     if streamlit_process:
         streamlit_process.kill()
+
+
+def scroll():
+    print("Scrolling the page...")
+    pyautogui.scroll(-100)
+
+
+def switch():
+    print("Switching the page...")
+    pyautogui.hotkey('alt', 'tab')
+
+
+def remove():
+    pyautogui.hotkey('ctrl', 'w')
+    print("removing the page..")
+
+
+def explain_project():
+    print("Explaining the project...")
+    pyautogui.hotkey('alt', 'tab')
+    pyautogui.hotkey('ctrl', 't')
+    pyautogui.write("https://github.com/DeepeshKalura/vision-assistance")
+    pyautogui.press('enter')
+    time.sleep(0.2)
     
     
 
@@ -40,6 +69,18 @@ def main():
                 print(text)
                 print("You said:", text)
 
+                if "switch" in text.lower():
+                    switch()
+
+                if "explain" in text.lower():
+                    explain_project()
+
+                if "scroll" in text.lower():
+                    scroll()
+
+                if "remove" in text.lower():
+                    remove()
+                
                 if "start" in text.lower():
                     print("Start keyword detected. Starting the system...")
                     start()
@@ -48,20 +89,15 @@ def main():
                 if "close" in text.lower():
                     print("Close keyword detected. Stopping streaming...")
                     close()
-        
-                
-
 
                 if "stop" in text.lower():
                     print("Stop keyword detected. Stopping streaming...")
                     stopingAll()
                     break
 
-                
-                # hit point logic issue hai
                 if "describe" in text.lower():
                     print("describe keyword detected. Stopping streaming...")
-                    # code run saniya 
+                    # code written by saniya 
                     result = (multimodel(encode_image("./images/char.jpeg")))
                     generate_audio(result)
                     
@@ -85,3 +121,7 @@ def main():
 if __name__ == "__main__":
     main()
 
+
+
+# my logic start with opening the readme file and explaining the project
+# then start with the 
