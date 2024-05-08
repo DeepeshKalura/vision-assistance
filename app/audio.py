@@ -27,7 +27,17 @@ class RealTimeAudio:
 
 
 @cet
-def generate_audio(text: str):
+def generate_audio(text: str, name: str):
+    """
+    Generates audio from the given text using the Text-to-Speech API.
+
+    Args:
+        text (str): The text to convert into audio.
+        name (str): The name of the file to save the audio as.
+
+    Returns:
+        None
+    """
     response = client.audio.speech.create(
         model="tts-1",
         voice="alloy",
@@ -39,7 +49,7 @@ def generate_audio(text: str):
     voice="alloy",
     input=text
     ) as response:
-        response.stream_to_file("speech.mp3")
+        response.stream_to_file(f"audio/{name}.mp3")
 
         
 
