@@ -1,14 +1,13 @@
 import os
+import time
+import pyautogui
 import subprocess
 import speech_recognition as sr
+
+
 from app.audio import generate_audio
 from app.multimodel import multimodel, encode_image
-import streamlit as st
-import pyautogui
-import time
-import warnings
 
-warnings.filterwarnings("ignore")
 
 r = sr.Recognizer()
 
@@ -105,12 +104,8 @@ def main():
                 if "help" in text.lower():
                     print("help keyword detected. Stopping streaming...")
                     generate_audio("Help has been send to your location?")
-                    
+
                 
-                if "talk" in text.lower():
-                    print("help keyword detected. Stopping streaming...")
-                    generate_audio("Talk to me")
-                    
 
         
         except sr.UnknownValueError:
@@ -120,8 +115,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-# my logic start with opening the readme file and explaining the project
-# then start with the 
