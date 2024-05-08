@@ -7,6 +7,7 @@ import speech_recognition as sr
 
 from app.audio import generate_audio
 from app.multimodel import multimodel, encode_image
+from app.sos import help_sms
 
 
 r = sr.Recognizer()
@@ -103,7 +104,11 @@ def main():
 
                 if "help" in text.lower():
                     print("help keyword detected. Stopping streaming...")
-                    generate_audio("Help has been send to your location?")
+                    isreached = help_sms()
+                    if isreached:
+                        generate_audio("Help has been send to your location?")
+                    else:
+                        generate_audio("Failed to send help to your location. Please waiting help been sending.")
 
                 
 
