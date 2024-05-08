@@ -1,0 +1,7 @@
+openai
+python-dotenv
+PyAudio
+streamlit
+SpeechRecognition
+opencv-python
+opencv-contrib-python
