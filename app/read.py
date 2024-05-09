@@ -1,9 +1,19 @@
 import os
 from pathlib import Path
-
-from app.utility import generate_audio, cet
-
+from app.utility import gnerate_audio
 import google.generativeai as genai
+from dotenv import load_dotenv
+from fastapi import APIRouter
+from fastapi.responses import StreamingResponse
+
+load_dotenv()
+
+
+router = APIRouter(
+    prefix="/read",
+    tags=["read"],
+)
+
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
@@ -54,13 +64,8 @@ def extract_structured_data():
     results = model.generate_content(prompt)
     return results.text
 
-
-@cet
+@router.get("/")
 def message():
     result = extract_structured_data()
-    print(result)
-    audio_file_path = "audio/message.mp3"
-    if not os.path.exists(audio_file_path):
-        generate_audio(result, "message")
+    return StreamingResponse(gnerate_audio(result), media_type="audio/mpeg")
 
-message()
