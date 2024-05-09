@@ -1,9 +1,8 @@
-openai
-python-dotenv
-PyAudio
-streamlit
+pyautogui
+google-generativeai
 SpeechRecognition
-opencv-python
-opencv-contrib-python
 fastapi
+openai
+numpy
+geocoder
 twilio
