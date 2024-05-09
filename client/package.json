@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@chengsokdara/use-whisper": "^0.2.0",
+    "@ffmpeg/core": "^0.12.6",
+    "@ffmpeg/ffmpeg": "^0.12.10",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
