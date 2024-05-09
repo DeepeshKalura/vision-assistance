@@ -1,7 +1,14 @@
+import os
 import googlemaps
 from datetime import datetime
+from dotenv import load_dotenv
 
-gmaps = googlemaps.Client(key='AIzaSyBuXRk4iP-jBj_KTUBJv7r_BT7mk0_wGcU')
+
+load_dotenv()
+
+
+key = os.getenv("GOOGLEMAPS_API_KEY")
+gmaps = googlemaps.Client(key=key)
 
 # Geocoding an address
 geocode_result = gmaps.geocode('1600 Amphitheatre Parkway, Mountain View, CA')

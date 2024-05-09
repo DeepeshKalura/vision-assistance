@@ -1,14 +1,14 @@
 import os
+import time
+import pyautogui
 import subprocess
 import speech_recognition as sr
-from app.audio import generate_audio
-from app.multimodel import multimodel, encode_image
-import streamlit as st
-import pyautogui
-import time
-import warnings
 
-warnings.filterwarnings("ignore")
+
+from app.utility import generate_audio
+from app.multimodel import multimodel, encode_image
+from app.sos import help_sms
+
 
 r = sr.Recognizer()
 
@@ -61,7 +61,7 @@ def main():
         try:
             with sr.Microphone() as mic:
                 print("Say something!")
-                audio = r.listen(source=mic, phrase_time_limit=2 ) # Time out is giving
+                audio = r.listen(source=mic, phrase_time_limit=1 ) # Time out is giving
                 result = r.recognize_azure(audio_data=audio, key=os.getenv("AZURE_API_KEY"), language='en-US', location="eastus", profanity="masked")
                 print(result)
                 text = result[0]
@@ -104,13 +104,13 @@ def main():
 
                 if "help" in text.lower():
                     print("help keyword detected. Stopping streaming...")
-                    generate_audio("Help has been send to your location?")
-                    
+                    isreached = help_sms()
+                    if isreached:
+                        generate_audio("Help has been send to your location?")
+                    else:
+                        generate_audio("Failed to send help to your location. Please waiting help been sending.")
+
                 
-                if "talk" in text.lower():
-                    print("help keyword detected. Stopping streaming...")
-                    generate_audio("Talk to me")
-                    
 
         
         except sr.UnknownValueError:
@@ -120,8 +120,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-# my logic start with opening the readme file and explaining the project
-# then start with the 

@@ -3,6 +3,9 @@ import os
 from twilio.rest import Client
 from dotenv import load_dotenv
 
+
+from app.utility import location_with_ip_address
+
 load_dotenv()
 
 # Find your Account SID and Auth Token at twilio.com/console
@@ -12,6 +15,7 @@ auth_token = os.getenv("AUTH_TOKEN")
 
 client = Client(account_sid, auth_token)
 
+<<<<<<< HEAD
 message = client.messages \
     .create(
          body='Help ! Mr. XYZ is in danger. Please help him. his location is  location',
@@ -20,4 +24,18 @@ message = client.messages \
      )
 
 print(message.sid)
+=======
+def help_sms()->bool:
+    location, lantlang = location_with_ip_address()
+    sms = f"Alert! Deepesh Kalura need urgent help, his location is {location} and have latitude and longitude {lantlang}"
+    print(sms)
+    message = client.messages \
+        .create(
+            body='Help ! Mr. XYZ is in danger. Please help him. his location is  location',
+            from_='+17176743364',
+            to='+916280823503'
+        )
+
+    return (False if message.sid == None else True)
+>>>>>>> 83e72eadbc6d980060a94701a43a08f95657c42b
 
