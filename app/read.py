@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from app.utility import gnerate_audio
+from app.utility import cet, gnerate_audio
 import google.generativeai as genai
 from dotenv import load_dotenv
 from fastapi import APIRouter
@@ -65,7 +65,10 @@ def extract_structured_data():
     return results.text
 
 @router.get("/")
+@cet
 def message():
     result = extract_structured_data()
-    return StreamingResponse(gnerate_audio(result), media_type="audio/mpeg")
+    # print(result)
+    return result
+    # return StreamingResponse(gnerate_audio(result), media_type="audio/mpeg")
 
