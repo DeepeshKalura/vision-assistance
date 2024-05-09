@@ -1,8 +1,9 @@
 pyautogui
 google-generativeai
 SpeechRecognition
-fastapi
+fastapi[all]
 openai
 numpy
 geocoder
 twilio
+gTTS
