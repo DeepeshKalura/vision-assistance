@@ -1,11 +1,12 @@
 import os
 import base64
+
 from openai import OpenAI
 from dotenv import load_dotenv
-from fastapi import APIRouter
+from fastapi import APIRouter, status
+from fastapi.responses import StreamingResponse
 
-from app.utility import cet
-
+from app.utility import gnerate_audio
 
 load_dotenv()
 
@@ -23,8 +24,10 @@ def encode_image(image_path):
     return base64.b64encode(image_file.read()).decode('utf-8')
 
 
-@router.post("/")
-def multimodel(base64_image: str)->str:
+@router.post("/", status_code=status.HTTP_202_ACCEPTED, response_class=StreamingResponse)
+def multimodel():
+  path = "./images/char.jpeg"
+  base64_image = encode_image(path)
   response = client.chat.completions.create(
     model="gpt-4-turbo",
     messages=[
@@ -41,8 +44,9 @@ def multimodel(base64_image: str)->str:
         ],
       }
     ],
-    max_tokens=300,
+    max_tokens=200,
   )
-
-  return response.choices[0].message.content
+  text = response.choices[0].message.content
+  
+  return StreamingResponse(gnerate_audio(text), media_type="audio/mpeg")
 
