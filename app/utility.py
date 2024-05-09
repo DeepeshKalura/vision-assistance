@@ -1,6 +1,7 @@
 import os
 import time
 from functools import wraps
+from typing import List
 import cv2
 from openai import OpenAI
 import requests
@@ -102,3 +103,17 @@ def generate_audio(text: str, name: str):
     input=text
     ) as response:
         response.stream_to_file(f"audio/{name}.mp3")
+
+
+
+def average_of_list(l:List)->float:
+    """
+    This function will calculate the average of the list.
+
+    Args:
+        l (List): list of numbers
+
+    Returns:
+        float: average of the list
+    """
+    return sum(l)/len(l)

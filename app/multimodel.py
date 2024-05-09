@@ -2,8 +2,7 @@ import os
 import base64
 from openai import OpenAI
 from dotenv import load_dotenv
-import time
-from functools import wraps
+from fastapi import APIRouter
 
 from app.utility import cet
 
@@ -11,6 +10,10 @@ from app.utility import cet
 load_dotenv()
 
 
+router = APIRouter(
+  prefix="/multimodel",
+  tags=["multimodel"],
+)
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
@@ -20,7 +23,7 @@ def encode_image(image_path):
     return base64.b64encode(image_file.read()).decode('utf-8')
 
 
-@cet
+@router.post("/")
 def multimodel(base64_image: str)->str:
   response = client.chat.completions.create(
     model="gpt-4-turbo",
