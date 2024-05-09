@@ -11,14 +11,13 @@ from app.sos import help_sms
 
 
 r = sr.Recognizer()
-
+global number
 
 def stopingAll():
-    sr.Microphone().stop()
-
+    pass
 
 def start():
-    global streamlit_process
+    global cv_process
     print("Starting the system...")
     streamlit_process = subprocess.Popen(["streamlit", "run", "web.py"])
 
@@ -57,35 +56,25 @@ def explain_project():
     
 
 def main():
+    global number
+    number = 0 
     while True:
+        number += 1
         try:
             with sr.Microphone() as mic:
                 print("Say something!")
-                audio = r.listen(source=mic, phrase_time_limit=1 ) # Time out is giving
+                audio = r.listen(source=mic, phrase_time_limit=2 ) # Time out is giving
                 result = r.recognize_azure(audio_data=audio, key=os.getenv("AZURE_API_KEY"), language='en-US', location="eastus", profanity="masked")
                 print(result)
                 text = result[0]
                 print(type(text), type(result))
                 print(text)
                 print("You said:", text)
-
-                if "switch" in text.lower():
-                    switch()
-
-                if "explain" in text.lower():
-                    explain_project()
-
-                if "scroll" in text.lower():
-                    scroll()
-
-                if "remove" in text.lower():
-                    remove()
                 
                 if "start" in text.lower():
                     print("Start keyword detected. Starting the system...")
                     start()
                 
-
                 if "close" in text.lower():
                     print("Close keyword detected. Stopping streaming...")
                     close()
@@ -99,7 +88,7 @@ def main():
                     print("describe keyword detected. Stopping streaming...")
                     # code written by saniya 
                     result = (multimodel(encode_image("./images/char.jpeg")))
-                    generate_audio(result)
+                    generate_audio(result, str(number))
                     
 
                 if "help" in text.lower():
