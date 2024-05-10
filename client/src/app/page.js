@@ -30,11 +30,8 @@ export default function Home() {
   if (!browserSupportsSpeechRecognition) {
     return <span>Browser doesn't support speech recognition.</span>;
   }
-<<<<<<< HEAD
   console.log(watchPosition)
-=======
   
->>>>>>> 1c8fd494c15d6175e4de0394628f235f5e858ae7
   useEffect(() => {
     if (transcript.includes("describe")) {
   
