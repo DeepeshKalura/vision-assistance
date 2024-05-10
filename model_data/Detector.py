@@ -2,13 +2,21 @@ import cv2
 import numpy as np
 import requests
 import threading
+import time
 
 np.random.seed(20)
 
 KNOWN_WIDTHS = {
-    "person": 0.5,  # meters
-    "car": 2,  # meters
-    # Add more objects with their known widths if needed
+    "person": 0.5,
+    "car": 2,
+    "backpack" : 0.55,
+    "bottle" : 0.20,
+    "cup" : 0.15,
+    "chair" : 0.50,
+    "laptop" : 0.40,
+    "mouse" : 0.10,
+    "keyboard" : 0.30,
+    "phone" : 0.15,  
 }
 
 class Detector:
@@ -28,6 +36,8 @@ class Detector:
         self.readClasses()
         self.stop_event = threading.Event()
 
+        self.objects_within_distance = {}  # Dictionary to store objects within distance
+
     def readClasses(self):
         with open(self.classesPath, 'r') as f:
             self.classesList = f.read().splitlines()
@@ -35,8 +45,8 @@ class Detector:
         self.classesList.insert(0, '__Background__')
         self.colorList = np.random.uniform(low=0, high=255, size=(len(self.classesList),3))
 
-    def distance_to_camera(self, known_width, per_width):
-        return (known_width * self.focalLength) / per_width
+    def distance_to_camera(self, known_width, per_width, focal_Length):
+        return (known_width * focal_Length) / per_width
 
     def receive_frames(self):
         stream = requests.get(self.server_address, stream=True)
@@ -59,7 +69,9 @@ class Detector:
             confidences = list(np.array(confidences).reshape(1,-1)[0])
             confidences = list(map(float, confidences))
 
-            bboxIdx = cv2.dnn.NMSBoxes(bboxs, confidences, score_threshold=0.5, nms_threshold=0.2)
+            bboxIdx = cv2.dnn.NMSBoxes(bboxs, confidences, score_threshold=0.55, nms_threshold=0.2)
+
+            current_time = time.time()
 
             if len(bboxIdx) != 0:
                 for i in range(0, len(bboxIdx)):
@@ -68,18 +80,28 @@ class Detector:
                     classLabelID = np.squeeze(classLabelIDs[np.squeeze(bboxIdx[i])])
                     classLabel = self.classesList[classLabelID]
 
-                    if classLabel in KNOWN_WIDTHS:
-                        width = bbox[2] - bbox[0]
-                        distance = self.distance_to_camera(KNOWN_WIDTHS[classLabel], width)
-                        distance_text = "Distance: {:.2f}m".format(distance)
-                    else:
-                        distance_text = "Distance: Unknown"
-
                     classColor = [int(c) for c in self.colorList[classLabelID]]
 
                     displayText = "{}:{:.2f}".format(classLabel, classConfidence)
 
                     x, y, w, h = bbox
+
+                    if classLabel in KNOWN_WIDTHS:
+                        width = w
+                        distance = self.distance_to_camera(KNOWN_WIDTHS[classLabel], width, focal_Length=self.focalLength)
+                        distance_text = "Distance: {:.2f}m".format(distance)
+                        if distance < 1:
+                            if classLabelID not in self.objects_within_distance:
+                                self.objects_within_distance[classLabelID] = current_time
+                                print(f"New object detected: {classLabel}")
+                            else:
+                                if current_time - self.objects_within_distance[classLabelID] >= 1:
+                                    self.objects_within_distance[classLabelID] = current_time
+                        else:
+                            if classLabelID in self.objects_within_distance:
+                                del self.objects_within_distance[classLabelID]
+                    else:
+                        distance_text = "Distance: Unknown"
 
                     cv2.rectangle(frame, (x, y), (x + w, y + h), color=classColor, thickness=1)
                     cv2.putText(frame, displayText, (x, y - 10), cv2.FONT_HERSHEY_PLAIN, 1, classColor, 2)
