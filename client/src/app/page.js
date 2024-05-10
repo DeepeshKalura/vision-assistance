@@ -3,15 +3,12 @@ import "regenerator-runtime/runtime";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
-<<<<<<< HEAD
 import { useGeolocated } from "react-geolocated";
 import { useEffect } from "react";
-=======
 import { useEffect,useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
->>>>>>> 1c8fd494c15d6175e4de0394628f235f5e858ae7
 export default function Home() {
   const [button_status, setButtonStatus] = useState(true);
   const {
