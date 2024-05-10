@@ -1,12 +1,14 @@
 import os
 import time
 from functools import wraps
+from typing import List
 import cv2
 from openai import OpenAI
 import requests
 import numpy as np
 import geocoder
-import webbrowser
+from gtts import gTTS
+from io import BytesIO
 #? cet = calculate_execution_time
 
 
@@ -78,27 +80,33 @@ def location_with_gps():
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-@cet
-def generate_audio(text: str, name: str):
-    """
-    Generates audio from the given text using the Text-to-Speech API.
-
-    Args:
-        text (str): The text to convert into audio.
-        name (str): The name of the file to save the audio as.
-
-    Returns:
-        None
-    """
-    response = client.audio.speech.create(
+def generate_audio(text:str, name:str):
+    a = client.audio.speech.create(
         model="tts-1",
         voice="alloy",
         input=text,
     )
-    
-    with client.audio.speech.with_streaming_response.create(
-    model="tts-1",
-    voice="alloy",
-    input=text
-    ) as response:
-        response.stream_to_file(f"audio/{name}.mp3")
+    a.write_to_file(name)
+
+async def gnerate_audio(text:str):
+    a = client.audio.speech.create(
+        model="tts-1",
+        voice="alloy",
+        input=text,
+    )
+    async for chunk in await a.aiter_bytes():
+        yield chunk
+
+
+
+def average_of_list(l:List)->float:
+    """
+    This function will calculate the average of the list.
+
+    Args:
+        l (List): list of numbers
+
+    Returns:
+        float: average of the list
+    """
+    return sum(l)/len(l)
