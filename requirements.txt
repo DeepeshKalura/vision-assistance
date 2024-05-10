@@ -8,3 +8,4 @@ geocoder
 twilio
 gTTS
 opencv-contrib-python
+pyaudio
