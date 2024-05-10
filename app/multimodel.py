@@ -4,9 +4,10 @@ import base64
 from openai import OpenAI
 from dotenv import load_dotenv
 from fastapi import APIRouter, status
-from fastapi.responses import StreamingResponse
+from fastapi.responses import FileResponse, StreamingResponse
 
 from app.utility import gnerate_audio
+from model_data.improved_detector import get_frame_from_receive_frames
 
 load_dotenv()
 
@@ -26,8 +27,8 @@ def encode_image(image_path):
 
 @router.post("/", status_code=status.HTTP_202_ACCEPTED, response_class=StreamingResponse)
 def multimodel():
-  path = "./images/surrounding.jpeg"
-  base64_image = encode_image(path)
+  frame = get_frame_from_receive_frames()
+  base64_image = encode_image("output.jpg")
   response = client.chat.completions.create(
     model="gpt-4-turbo",
     messages=[
@@ -49,4 +50,10 @@ def multimodel():
   text = response.choices[0].message.content
   # return text
   return StreamingResponse(gnerate_audio(text), media_type="audio/mpeg")
+
+
+
+@router.get("/faster", status_code=status.HTTP_202_ACCEPTED, response_class=FileResponse)
+def file_response():
+  return FileResponse("generalsurrounding.mp3")
 

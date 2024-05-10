@@ -5,6 +5,10 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
+from PIL import Image
+import cv2
+
+from model_data.improved_detector import get_frame_from_receive_frames
 
 load_dotenv()
 
@@ -50,13 +54,14 @@ model = genai.GenerativeModel(model_name="gemini-1.0-pro-vision-latest",
 
 
 def extract_structured_data():
-    
+    # frame = get_frame_from_receive_frames()
 
+    
     prompt = [
        "You are an expert admin people who will extract core information from documents",
        {
           "mime_type": "image/jpeg",
-          "data" : Path(f"images/poster.jpg").read_bytes()
+          "data" : Path(f"output.jpg").read_bytes()
        },
        "You are the best OCR in this world, please provide text to the blind person being accurate is yout goal:"
     ]
@@ -69,6 +74,5 @@ def extract_structured_data():
 def message():
     result = extract_structured_data()
     # print(result)
-    return result
-    # return StreamingResponse(gnerate_audio(result), media_type="audio/mpeg")
+    return StreamingResponse(gnerate_audio(result), media_type="audio/mpeg")
 
