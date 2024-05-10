@@ -70,7 +70,6 @@ def extract_structured_data():
     return results.text
 
 @router.get("/")
-@cet
 def message():
     result = extract_structured_data()
     # print(result)
