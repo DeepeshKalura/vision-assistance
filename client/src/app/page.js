@@ -3,6 +3,7 @@ import "regenerator-runtime/runtime";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
+import { useGeolocated } from "react-geolocated";
 import { useEffect } from "react";
 export default function Home() {
   const {
@@ -11,9 +12,17 @@ export default function Home() {
     resetTranscript,
     browserSupportsSpeechRecognition,
   } = useSpeechRecognition();
+  const { coords, isGeolocationAvailable, isGeolocationEnabled,watchPosition = true } =
+    useGeolocated({
+      positionOptions: {
+        enableHighAccuracy: false,
+      },
+      userDecisionTimeout: 5000,
+    });
   if (!browserSupportsSpeechRecognition) {
     return <span>Browser doesn't support speech recognition.</span>;
   }
+  console.log(watchPosition)
   useEffect(() => {
     if (transcript.includes("describe")) {
       console.log("You are right");
@@ -42,6 +51,38 @@ export default function Home() {
         <button onClick={resetTranscript}>Reset</button>
         <p>{transcript}</p>
       </div>
+      {!isGeolocationAvailable ? (
+        <div>Your browser does not support Geolocation</div>
+      ) : !isGeolocationEnabled ? (
+        <div>Geolocation is not enabled</div>
+      ) : coords ? (
+        <table>
+          <tbody>
+            <tr>
+              <td>latitude</td>
+              <td>{coords.latitude}</td>
+            </tr>
+            <tr>
+              <td>longitude</td>
+              <td>{coords.longitude}</td>
+            </tr>
+            <tr>
+              <td>altitude</td>
+              <td>{coords.altitude}</td>
+            </tr>
+            <tr>
+              <td>heading</td>
+              <td>{coords.heading}</td>
+            </tr>
+            <tr>
+              <td>speed</td>
+              <td>{coords.speed}</td>
+            </tr>
+          </tbody>
+        </table>
+      ) : (
+        <div>Getting the location data&hellip; </div>
+      )}
     </main>
   );
 }
