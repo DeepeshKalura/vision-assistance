@@ -3,7 +3,7 @@ import subprocess
 import speech_recognition as sr
 
 from app.utility import generate_audio
-from app.multimodel import multimodel
+from app.describe import multimodel
 from app.sos import help_sms
 from app.read import message
 
