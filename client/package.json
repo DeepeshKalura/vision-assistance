@@ -12,10 +12,12 @@
     "@chengsokdara/use-whisper": "^0.2.0",
     "@ffmpeg/core": "^0.12.6",
     "@ffmpeg/ffmpeg": "^0.12.10",
+    "axios": "^1.6.8",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
     "react-speech-recognition": "^3.10.0",
+    "react-toastify": "^10.0.5",
     "regenerator-runtime": "^0.14.1"
   },
   "devDependencies": {
