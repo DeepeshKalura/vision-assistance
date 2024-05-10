@@ -24,7 +24,7 @@ class Location(BaseModel):
     lat: str
     long:str
 
-@router.get("/", responses=FileResponse, status_code=200)
+@router.post("/", status_code=200)
 def help_sms(location: Location):
     address = location_address_with_lat_long(location.lat, location.long)
     sms = f"Alert! Deepesh Kalura need urgent help, his location is {address} with lat lang ({location.lat}, {location.long})"
@@ -37,7 +37,7 @@ def help_sms(location: Location):
         )
 
     if (message.sid != None):
-        return FileResponse("audio/send_help.mp3")
-    return FileResponse("audio/help_not_send.mp3")
+        return FileResponse("audio/able_send_help.mp3")
+    return FileResponse("audio/unable_send_help.mp3")
 
 
