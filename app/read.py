@@ -56,7 +56,7 @@ def extract_structured_data():
        "You are an expert admin people who will extract core information from documents",
        {
           "mime_type": "image/jpeg",
-          "data" : Path(f"images/message.jpeg").read_bytes()
+          "data" : Path(f"images/poster.jpg").read_bytes()
        },
        "You are the best OCR in this world, please provide text to the blind person being accurate is yout goal:"
     ]

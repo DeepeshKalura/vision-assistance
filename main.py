@@ -46,7 +46,7 @@ def main():
                     print("describe keyword detected. Stopping streaming...")
                     # code written by saniya 
                     result = multimodel()
-                    generate_audio(result, str(number))
+                    generate_audio(result, str(number)+".mp3+")
                     
                 if "help" in text.lower():
                     print("help keyword detected. Stopping streaming...")

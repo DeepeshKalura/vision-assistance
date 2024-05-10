@@ -26,7 +26,7 @@ def encode_image(image_path):
 
 @router.post("/", status_code=status.HTTP_202_ACCEPTED, response_class=StreamingResponse)
 def multimodel():
-  path = "./images/char.jpeg"
+  path = "./images/surrounding.jpeg"
   base64_image = encode_image(path)
   response = client.chat.completions.create(
     model="gpt-4-turbo",
