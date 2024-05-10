@@ -3,6 +3,7 @@
 
 __pycache__
 /node_modules
-*.mp3
 
 test.py
+
+output.jpg
