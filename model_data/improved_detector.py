@@ -41,8 +41,8 @@ def receive_frames():
                 jpg = bytes_received[a:b+2]
                 bytes_received = bytes_received[b+2:]
                 frame = cv2.imdecode(np.frombuffer(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
-                # yield frame
-                yield (b'--frame\r\n'b'Content-Type: image/jpg\r\n\r\n' + frame + b'\r\n')
+                yield frame
+                # yield (b'--frame\r\n'b'Content-Type: image/jpg\r\n\r\n' + frame + b'\r\n')
 
 
 def process_frames():
