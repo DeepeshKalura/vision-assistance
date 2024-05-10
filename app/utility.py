@@ -80,6 +80,14 @@ def location_with_gps():
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+def generate_audio(text:str, name:str):
+    a = client.audio.speech.create(
+        model="tts-1",
+        voice="alloy",
+        input=text,
+    )
+    a.write_to_file(name)
+
 async def gnerate_audio(text:str):
     a = client.audio.speech.create(
         model="tts-1",
@@ -88,6 +96,7 @@ async def gnerate_audio(text:str):
     )
     async for chunk in await a.aiter_bytes():
         yield chunk
+
 
 
 def average_of_list(l:List)->float:

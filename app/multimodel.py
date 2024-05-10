@@ -47,6 +47,6 @@ def multimodel():
     max_tokens=200,
   )
   text = response.choices[0].message.content
-  
-  return StreamingResponse(gnerate_audio(text), media_type="audio/mpeg")
+  return text
+  # return StreamingResponse(gnerate_audio(text), media_type="audio/mpeg")
 
