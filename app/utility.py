@@ -7,8 +7,7 @@ from openai import OpenAI
 import requests
 import numpy as np
 import geocoder
-from gtts import gTTS
-from io import BytesIO
+from geopy.geocoders import Nominatim
 #? cet = calculate_execution_time
 
 
@@ -73,8 +72,12 @@ def location_with_ip_address() -> tuple[str, list[float]]:
 
   
 
-def location_with_gps():
-  pass
+def location_address_with_lat_long(lat:str, long:str):
+  latlang = f"{lat}, {long}"
+  geolocator = Nominatim(user_agent="help feature")
+  location = geolocator.reverse(latlang)
+  return location.address
+
 
 
 

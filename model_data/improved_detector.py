@@ -30,6 +30,22 @@ classesPath = "model_data/coco.names"
 classesList, colorList = read_classes(classesPath)
 server_address = "http://192.168.1.1"
 
+
+
+def get_frame_from_receive_frames():
+    stream = requests.get(server_address, stream=True)
+    bytes_received = bytes()
+    for chunk in stream.iter_content(chunk_size=1024):
+        bytes_received += chunk
+        a = bytes_received.find(b'\xff\xd8') # JPEG start marker
+        b = bytes_received.find(b'\xff\xd9') # JPEG end marker
+        if a != -1 and b != -1:
+            jpg = bytes_received[a:b+2]
+            bytes_received = bytes_received[b+2:]
+            frame = cv2.imdecode(np.frombuffer(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
+            cv2.imwrite('output.jpg', frame)
+            break
+
 def receive_frames():
         stream = requests.get(server_address, stream=True)
         bytes_received = bytes()

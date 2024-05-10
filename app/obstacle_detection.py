@@ -10,4 +10,3 @@ router = APIRouter(
 @router.get("/", response_class=StreamingResponse, status_code=200)
 def video_stream():
     return StreamingResponse(process_frames(), media_type="multipart/x-mixed-replace; boundary=frame")
-
