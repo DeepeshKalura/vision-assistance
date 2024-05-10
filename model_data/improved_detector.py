@@ -46,7 +46,7 @@ def receive_frames():
 
 
 def process_frames():
-        
+        print("Processing frames")
         for frame in receive_frames():
             classLabelIDs, confidences, bboxs = net.detect(frame, confThreshold=0.4)
 
