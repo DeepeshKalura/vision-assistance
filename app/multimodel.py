@@ -4,11 +4,8 @@ from app.utility import cet, gnerate_audio
 import google.generativeai as genai
 from dotenv import load_dotenv
 from fastapi import APIRouter
-from fastapi.responses import StreamingResponse
-from PIL import Image
-import cv2
+from fastapi.responses import FileResponse, StreamingResponse
 
-from app.utility import generate_audio
 
 from model_data.improved_detector import get_frame_from_receive_frames
 
@@ -101,6 +98,7 @@ def describe_surrounding():
     result = describe_surrounding()
     return StreamingResponse(gnerate_audio(result), media_type="audio/mpeg")
 
-
-
+@router.get("fdescribe")
+def describe_surrounding_faster():
+    return FileResponse("/audio/general_surrounding.mp3")
 
