@@ -5,12 +5,19 @@ import threading
 
 np.random.seed(20)
 
+KNOWN_WIDTHS = {
+    "person": 0.5,  # meters
+    "car": 2,  # meters
+    # Add more objects with their known widths if needed
+}
+
 class Detector:
-    def __init__(self, server_address, configPath, modelPath, classesPath):
+    def __init__(self, server_address, configPath, modelPath, classesPath, focalLength):
         self.server_address = server_address
         self.configPath = configPath
         self.modelPath = modelPath
         self.classesPath = classesPath
+        self.focalLength = focalLength
 
         self.net = cv2.dnn_DetectionModel(self.modelPath, self.configPath)
         self.net.setInputSize(320,320)
@@ -19,8 +26,6 @@ class Detector:
         self.net.setInputSwapRB(True)
 
         self.readClasses()
-        self.known_width = 10
-        self.focal_length = 280
         self.stop_event = threading.Event()
 
     def readClasses(self):
@@ -30,8 +35,8 @@ class Detector:
         self.classesList.insert(0, '__Background__')
         self.colorList = np.random.uniform(low=0, high=255, size=(len(self.classesList),3))
 
-    def calculate_distance(self, known_width, focal_length, per_width):
-        return (known_width * focal_length) / per_width
+    def distance_to_camera(self, known_width, per_width):
+        return (known_width * self.focalLength) / per_width
 
     def receive_frames(self):
         stream = requests.get(self.server_address, stream=True)
@@ -63,6 +68,13 @@ class Detector:
                     classLabelID = np.squeeze(classLabelIDs[np.squeeze(bboxIdx[i])])
                     classLabel = self.classesList[classLabelID]
 
+                    if classLabel in KNOWN_WIDTHS:
+                        width = bbox[2] - bbox[0]
+                        distance = self.distance_to_camera(KNOWN_WIDTHS[classLabel], width)
+                        distance_text = "Distance: {:.2f}m".format(distance)
+                    else:
+                        distance_text = "Distance: Unknown"
+
                     classColor = [int(c) for c in self.colorList[classLabelID]]
 
                     displayText = "{}:{:.2f}".format(classLabel, classConfidence)
@@ -71,10 +83,7 @@ class Detector:
 
                     cv2.rectangle(frame, (x, y), (x + w, y + h), color=classColor, thickness=1)
                     cv2.putText(frame, displayText, (x, y - 10), cv2.FONT_HERSHEY_PLAIN, 1, classColor, 2)
-
-                    object_width = w
-                    distance = self.calculate_distance(known_width=10, focal_length=self.focal_length, per_width=object_width)
-                    cv2.putText(frame, f"Distance: {distance:.2f} cm", (x, y + h + 20), cv2.FONT_HERSHEY_PLAIN, 1, classColor, 2)
+                    cv2.putText(frame, distance_text, (x, y + h + 20), cv2.FONT_HERSHEY_PLAIN, 1, classColor, 2)
 
             cv2.imshow("Result", frame)
 
