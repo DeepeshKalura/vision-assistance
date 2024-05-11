@@ -1,3 +1,4 @@
+import requests
 import time
 import cv2
 import numpy as np
@@ -46,8 +47,8 @@ classesList, colorList = read_classes(classesPath)
 server_address = "http://192.168.1.1"
 
 
-def receive_frames(self):
-    stream = requests.get(self.server_address, stream=True)
+def receive_frames():
+    stream = requests.get(server_address, stream=True)
     bytes_received = bytes()
     for chunk in stream.iter_content(chunk_size=1024):
         bytes_received += chunk
@@ -61,9 +62,11 @@ def receive_frames(self):
 
 
 def generting_alert(alert:str):
-    import requests
-    requests.post('http://localhost:8000/stream/alert', data = {'message': alert})
-    
+    response  = requests.post('http://localhost:8000/stream/alert', json={"message":alert})
+    if response.status_code == 200:
+        print("yes")
+    else:
+        print("no") 
 
     
 
