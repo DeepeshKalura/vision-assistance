@@ -10,6 +10,13 @@ import geocoder
 from geopy.geocoders import Nominatim
 #? cet = calculate_execution_time
 
+from playaudio import playaudio
+
+
+
+import pygame
+
+server_address = "http://192.168.1.1"
 
 def cet(func): 
   """
@@ -33,24 +40,19 @@ def cet(func):
   return wrapper
 
 
-def iot_to_cv_server():
-  url = "http://192.168.164.45/"
-  jpeg_stream = requests.get(url, stream=True)
-
-  if jpeg_stream.status_code == 200:
-    bytes_data = bytes()
-    for chunk in jpeg_stream.iter_content(chunk_size=1024):
-        bytes_data += chunk
-        a = bytes_data.find(b'\xff\xd8')
-        b = bytes_data.find(b'\xff\xd9')
-        if a != -1 and b != -1:
-            jpg = bytes_data[a:b+2]
-            bytes_data = bytes_data[b+2:]
-            frame = cv2.imdecode(np.frombuffer(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
-            if frame is not None:
-                    yield frame
-  else:
-      raise ConnectionError(f"Failed to connect to the server with status code: {jpeg_stream.status_code}")
+def capture_image():
+  stream = requests.get(server_address, stream=True)
+  bytes_received = bytes()
+  for chunk in stream.iter_content(chunk_size=1024):
+      bytes_received += chunk
+      a = bytes_received.find(b'\xff\xd8') # JPEG start marker
+      b = bytes_received.find(b'\xff\xd9') # JPEG end marker
+      if a != -1 and b != -1:
+          jpg = bytes_received[a:b+2]
+          bytes_received = bytes_received[b+2:]
+          frame = cv2.imdecode(np.frombuffer(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
+          cv2.imwrite('output.jpg', frame)
+          break
 
 
 
@@ -113,3 +115,19 @@ def average_of_list(l:List)->float:
         float: average of the list
     """
     return sum(l)/len(l)
+
+
+def play_audio(file_path):
+    pygame.init()
+    pygame.mixer.init()
+    pygame.mixer.music.load(file_path)
+    pygame.mixer.music.play()
+
+    while pygame.mixer.music.get_busy():
+        continue
+
+    pygame.mixer.quit()
+    pygame.quit()
+
+def play_audio_from_audio(file_path):
+  playaudio(file_path)

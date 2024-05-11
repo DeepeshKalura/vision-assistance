@@ -91,11 +91,13 @@ def describe_surrounding():
 @router.get("/read")
 def message():
     result = extract_structured_data()
+    return result
     return StreamingResponse(gnerate_audio(result), media_type="audio/mpeg")
 
 @router.get("/describe")
 def describe_surrounding():
     result = describe_surrounding()
+    return result
     return StreamingResponse(gnerate_audio(result), media_type="audio/mpeg")
 
 @router.get("fdescribe")

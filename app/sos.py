@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from fastapi import APIRouter
 from pydantic import BaseModel
 from fastapi.responses import FileResponse
-from app.utility import location_address_with_lat_long
+from app.utility import location_with_ip_address
 
 load_dotenv()
 
@@ -26,7 +26,7 @@ class Location(BaseModel):
 
 @router.post("/", status_code=200)
 def help_sms(location: Location):
-    address = location_address_with_lat_long(location.lat, location.long)
+    address = location_with_ip_address()
     sms = f"Alert! Deepesh Kalura need urgent help, his location is {address} with lat lang ({location.lat}, {location.long})"
     print(sms)
     message = client.messages \
@@ -37,7 +37,7 @@ def help_sms(location: Location):
         )
 
     if (message.sid != None):
-        return FileResponse("audio/able_send_help.mp3")
-    return FileResponse("audio/unable_send_help.mp3")
+        return False
+    return True
 
 

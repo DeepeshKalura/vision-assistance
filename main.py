@@ -2,7 +2,7 @@ import os
 import subprocess
 import speech_recognition as sr
 
-from app.utility import generate_audio
+from app.utility import generate_audio, play_audio
 from app.sos import help_sms
 from app.multimodel import message, describe_surrounding
 
@@ -35,9 +35,10 @@ def main():
                 text = result[0]
                 if "start" in text.lower():
                     start()
+                    
 
                 if "stop" in text.lower():
-                    print("Stop keyword detected. Stopping streaming...")
+                    print("Stop keyword detected. stopping streaming ")
                     stop()
                     break
 
@@ -46,6 +47,7 @@ def main():
                     # code written by saniya 
                     result = describe_surrounding()
                     generate_audio(result, str(number)+".mp3+")
+                    play_audio(str(number)+".mp3")
                     
                 if "help" in text.lower():
                     print("help keyword detected. Stopping streaming...")
@@ -53,15 +55,17 @@ def main():
                     if isreached:
                         if(os.path.exists("audio/able_send_help.mp3") == False):
                             generate_audio("Help has been send to your location?", "able_send_help.mp3")
+                        play_audio("able_send_help.mp3")
                     else:
                         if (os.path.exists("audio/unable_send_help.mp3") == False):
                             generate_audio("Failed to send help to your location. Please waiting help been sending.", "unable_send_help.mp3")
 
+                        play_audio("unable_send_help.mp3")
+
                 if "read" in text.lower():
                     result = message()
-                    if result:
-                        if (not os.path.exists("audio/message.mp3")):
-                            generate_audio(result, "audio/message.mp3")
+                    generate_audio(result, str(number)+".mp3")
+                    play_audio("audio/message.mp3")
 
                         
         except sr.UnknownValueError:

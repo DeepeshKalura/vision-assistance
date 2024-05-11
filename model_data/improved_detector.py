@@ -83,8 +83,10 @@ def get_frame_from_receive_frames():
             frame = cv2.imdecode(np.frombuffer(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
             cv2.imwrite('output.jpg', frame)
             break
+
 def distance_to_camera( known_width, per_width, focal_Length):
         return (known_width * focal_Length) / per_width
+
 def process_frames():
     for frame in receive_frames():
         classLabelIDs, confidences, bboxs = net.detect(frame, confThreshold=0.4)
