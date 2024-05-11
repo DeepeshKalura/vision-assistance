@@ -1,14 +1,14 @@
-# Download the helper library from https://www.twilio.com/docs/python/install
+
 import os
 from twilio.rest import Client
 from dotenv import load_dotenv
 from fastapi import APIRouter
+from pydantic import BaseModel
+from fastapi.responses import FileResponse
+from app.utility import location_address_with_lat_long
 
-from app.utility import  location_with_ip_address
 load_dotenv()
 
-# Find your Account SID and Auth Token at twilio.com/console
-# and set the environment variables. See http://twil.io/secure
 account_sid = os.getenv("ACCOUNT_SID")
 auth_token = os.getenv("AUTH_TOKEN")
 
@@ -20,10 +20,14 @@ router = APIRouter(
     tags=["help"],
 )
 
-@router.get("/")
-def help_sms():
-    location, lantlang = location_with_ip_address()
-    sms = f"Alert! Deepesh Kalura need urgent help, his location is {location} and have latitude and longitude {lantlang}"
+class Location(BaseModel):
+    lat: str
+    long:str
+
+@router.post("/", status_code=200)
+def help_sms(location: Location):
+    address = location_address_with_lat_long(location.lat, location.long)
+    sms = f"Alert! Deepesh Kalura need urgent help, his location is {address} with lat lang ({location.lat}, {location.long})"
     print(sms)
     message = client.messages \
         .create(
@@ -32,5 +36,8 @@ def help_sms():
             to='+916280823503'
         )
 
-    return (False if message.sid == None else True)
+    if (message.sid != None):
+        return FileResponse("audio/able_send_help.mp3")
+    return FileResponse("audio/unable_send_help.mp3")
+
 

@@ -3,9 +3,8 @@ import subprocess
 import speech_recognition as sr
 
 from app.utility import generate_audio
-from app.multimodel import multimodel
 from app.sos import help_sms
-from app.read import message
+from app.multimodel import message, describe_surrounding
 
 r = sr.Recognizer()
 
@@ -45,7 +44,7 @@ def main():
                 if "describe" in text.lower():
                     print("describe keyword detected. Stopping streaming...")
                     # code written by saniya 
-                    result = multimodel()
+                    result = describe_surrounding()
                     generate_audio(result, str(number)+".mp3+")
                     
                 if "help" in text.lower():
