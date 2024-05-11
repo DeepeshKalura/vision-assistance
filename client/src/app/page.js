@@ -7,6 +7,7 @@ import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { useGeolocated } from "react-geolocated";
 import { useEffect,useState,useCallback ,useRef} from "react";
 import axios from "axios";
+import { toast } from 'react-toastify';
 
 
 
@@ -56,10 +57,10 @@ export default function Home() {
       // Play audio when sourceUrl is set
       audioRef.current.play();
     }
-  }, [sourceUrl]);
+  }, [sourceUrl]);  
   useEffect(() => {
     setimg("http://127.0.0.1:8000/stream")
-
+    
   },[ReadyState])
   console.log(imgsrc)
   const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
