@@ -4,13 +4,9 @@ import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 import { useGeolocated } from "react-geolocated";
-import { useEffect } from "react";
 import { useEffect,useState } from "react";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 export default function Home() {
-  const [button_status, setButtonStatus] = useState(true);
   const {
     transcript,
     listening,
@@ -43,23 +39,9 @@ export default function Home() {
   },[])
   const notify = () => toast("Wow so easy!");
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <video class="w-[40rem] rounded-lg" autoPlay controls>
-        <source src="video4.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-      <div>
-        <p>Microphone: {listening ? "on" : "off"}</p>
-        <button
-          onClick={SpeechRecognition.startListening({ continuous: true })}
-        >
-          Start
-        </button>
-        <button onClick={SpeechRecognition.stopListening}>Stop</button>
-        <button onClick={resetTranscript}>Reset</button>
-        <p>{transcript}</p>
-      </div>
-      {!isGeolocationAvailable ? (
+    <div className="flex min-h-screen flex-col items-center justify-between p-24">
+      <img class="w-[40rem] rounded-lg" src="http://127.0.0.1:8000/stream/"/>
+      {/* {!isGeolocationAvailable ? (
         <div>Your browser does not support Geolocation</div>
       ) : !isGeolocationEnabled ? (
         <div>Geolocation is not enabled</div>
@@ -90,10 +72,10 @@ export default function Home() {
         </table>
       ) : (
         <div>Getting the location data&hellip; </div>
-      )}
-      <img class="w-[40rem] rounded-lg" src="http://127.0.0.1:8000/stream/"/>
+      )} */}
+      <time datetime="2016-10-25" suppressHydrationWarning={true} />
     <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" >Start</button>
-    </main>
+    </div>
         
   );
 }
