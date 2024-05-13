@@ -1,11 +1,10 @@
 import os
 import subprocess
 import speech_recognition as sr
-import sys
 
 from app.utility import generate_audio, play_audio
 from app.sos import help_sms
-from app.multimodel import message, describe_surrounding
+from app.multimodel import  describe_surrounding, read_image
 
 r = sr.Recognizer()
 
@@ -30,11 +29,11 @@ def main():
                     
 
                 if "stop" in text.lower():
-                    print("Stop keyword detected. stopping streaming ")
+                    print("Stop keyword detected. App is Closing ....")
                     break
 
                 if "describe" in text.lower():
-                    print("describe keyword detected. Stopping streaming...")
+                    print("describe keyword detected. Stop Audio streaming...")
                     # code written by saniya 
                     result = describe_surrounding()
                     generate_audio(result, str(number)+".mp3")
@@ -54,9 +53,9 @@ def main():
                         play_audio("unable_send_help.mp3")
 
                 if "read" in text.lower():
-                    result = message()
-                    generate_audio(result, str(number)+".mp3")
-                    play_audio(str(number)+".mp3")
+                    result = read_image()
+                    generate_audio(result, "audio/"+str(number)+".mp3")
+                    play_audio("audio/"+str(number)+".mp3")
 
                         
         except sr.UnknownValueError:

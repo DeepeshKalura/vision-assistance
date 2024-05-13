@@ -42,7 +42,7 @@ model = genai.GenerativeModel(model_name="gemini-1.0-pro-vision-latest",
                               safety_settings=safety_settings)
 
 
-def read_text():
+def read_image():
     capture_image()
     
     prompt = [
