@@ -1,4 +1,4 @@
-## Project Title
+## Visual Assistance
 This is a voice-activated visual assistance application that uses speech recognition and object detection to provide help in various situations. The application listens for specific keywords and performs actions accordingly. It can describe the surroundings, send help messages, and more.
 
 ## Getting Started
