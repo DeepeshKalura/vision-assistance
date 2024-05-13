@@ -1,11 +1,12 @@
 
+from json import decoder
 import os
 from twilio.rest import Client
 from dotenv import load_dotenv
 from fastapi import APIRouter
 from pydantic import BaseModel
-from fastapi.responses import FileResponse
-from app.utility import location_with_ip_address
+
+
 
 load_dotenv()
 
@@ -19,6 +20,23 @@ router = APIRouter(
     prefix="/sos",
     tags=["help"],
 )
+
+def location_with_ip_address() -> tuple[str, list[float]]:
+  """
+  Retrieves the location and latitude/longitude coordinates based on the IP address of the user.
+
+  Returns:
+    A tuple containing the location (address) and latitude/longitude coordinates.
+
+  Example:
+    >>> location_with_ip_address()
+    ('New York, NY, USA', [40.7128, -74.0060])
+  """
+  g = decoder.ip('me')
+  latlan = g.latlng
+  location = g.address
+  return (location, latlan)
+
 
 class Location(BaseModel):
     lat: str

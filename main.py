@@ -1,25 +1,24 @@
 import os
 import subprocess
 import speech_recognition as sr
+import sys
 
-from app.utility import generate_audio, play_audio
-from app.sos import help_sms
-from app.multimodel import message, describe_surrounding
+from utility import generate_audio, play_audio
+from sos import help_sms
+from multimodel import message, describe_surrounding
 
 r = sr.Recognizer()
 
+# path = os.getcwd()
+# sys.path.append(f'{path}/app')
 
-global number
-global running
+
+
 
 def start():
-    global running
     running = subprocess.run(["python", "model_data/main.py"])
 
 
-def stop():
-    global running
-    running.kill()
 
 def main():
     global number
@@ -39,14 +38,13 @@ def main():
 
                 if "stop" in text.lower():
                     print("Stop keyword detected. stopping streaming ")
-                    stop()
                     break
 
                 if "describe" in text.lower():
                     print("describe keyword detected. Stopping streaming...")
                     # code written by saniya 
                     result = describe_surrounding()
-                    generate_audio(result, str(number)+".mp3+")
+                    generate_audio(result, str(number)+".mp3")
                     play_audio(str(number)+".mp3")
                     
                 if "help" in text.lower():
@@ -65,7 +63,7 @@ def main():
                 if "read" in text.lower():
                     result = message()
                     generate_audio(result, str(number)+".mp3")
-                    play_audio("audio/message.mp3")
+                    play_audio(str(number)+".mp3")
 
                         
         except sr.UnknownValueError:

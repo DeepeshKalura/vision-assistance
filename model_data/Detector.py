@@ -1,8 +1,34 @@
+import os
 import cv2
 import numpy as np
+from openai import OpenAI
+import pygame
 import requests
 import threading
 import time
+
+def play_audio(file_path):
+    pygame.init()
+    pygame.mixer.init()
+    pygame.mixer.music.load(file_path)
+    pygame.mixer.music.play()
+
+    while pygame.mixer.music.get_busy():
+        continue
+
+    pygame.mixer.quit()
+    pygame.quit()
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+def generate_audio(text:str, name:str):
+    a = client.audio.speech.create(
+        model="tts-1",
+        voice="alloy",
+        input=text,
+    )
+    a.write_to_file(name)
+
 
 np.random.seed(20)
 
@@ -19,6 +45,9 @@ KNOWN_WIDTHS = {
     "phone" : 0.15,  
 }
 
+
+
+
 class Detector:
     def __init__(self, server_address, configPath, modelPath, classesPath, focalLength):
         self.server_address = server_address
@@ -26,6 +55,7 @@ class Detector:
         self.modelPath = modelPath
         self.classesPath = classesPath
         self.focalLength = focalLength
+        self.processing = False
 
         self.net = cv2.dnn_DetectionModel(self.modelPath, self.configPath)
         self.net.setInputSize(320,320)
@@ -44,6 +74,20 @@ class Detector:
 
         self.classesList.insert(0, '__Background__')
         self.colorList = np.random.uniform(low=0, high=255, size=(len(self.classesList),3))
+
+
+    def _process_song(self, text):
+        generate_audio(name="alert.mp3", text=text)
+        play_audio("alert.mp3")
+        self.processing = False
+
+    def new_process_song(self, text):
+        if self.processing:
+            pass
+        else:
+            self.processing = True
+            thread = threading.Thread(target=self._process_song, args=(text,))
+            thread.start()
 
     def distance_to_camera(self, known_width, per_width, focal_Length):
         return (known_width * focal_Length) / per_width
@@ -94,6 +138,8 @@ class Detector:
                             if classLabelID not in self.objects_within_distance:
                                 self.objects_within_distance[classLabelID] = current_time
                                 print(f"New object detected: {classLabel}")
+                                self.new_process_song(f"alert from {classLabel}")
+
                             else:
                                 if current_time - self.objects_within_distance[classLabelID] >= 1:
                                     self.objects_within_distance[classLabelID] = current_time
