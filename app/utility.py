@@ -8,12 +8,6 @@ import requests
 import numpy as np
 import geocoder
 from geopy.geocoders import Nominatim
-#? cet = calculate_execution_time
-
-from playaudio import playaudio
-
-
-
 import pygame
 
 server_address = "http://192.168.1.1"
@@ -128,6 +122,3 @@ def play_audio(file_path):
 
     pygame.mixer.quit()
     pygame.quit()
-
-def play_audio_from_audio(file_path):
-  playaudio(file_path)

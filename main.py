@@ -3,21 +3,14 @@ import subprocess
 import speech_recognition as sr
 import sys
 
-from utility import generate_audio, play_audio
-from sos import help_sms
-from multimodel import message, describe_surrounding
+from app.utility import generate_audio, play_audio
+from app.sos import help_sms
+from app.multimodel import message, describe_surrounding
 
 r = sr.Recognizer()
 
-# path = os.getcwd()
-# sys.path.append(f'{path}/app')
-
-
-
-
 def start():
-    running = subprocess.run(["python", "model_data/main.py"])
-
+    subprocess.run(["python", "model_data/main.py"])
 
 
 def main():

@@ -1,21 +1,11 @@
 import os
 from pathlib import Path
-from app.utility import cet, gnerate_audio
 import google.generativeai as genai
 from dotenv import load_dotenv
-from fastapi import APIRouter
-from fastapi.responses import FileResponse, StreamingResponse
-
-
-from model_data.improved_detector import get_frame_from_receive_frames
+from app.utility import capture_image
 
 load_dotenv()
 
-
-router = APIRouter(
-    prefix="/multimodel",
-    tags=["multimodel"],
-)
 
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
@@ -52,9 +42,8 @@ model = genai.GenerativeModel(model_name="gemini-1.0-pro-vision-latest",
                               safety_settings=safety_settings)
 
 
-def extract_structured_data():
-    # frame = get_frame_from_receive_frames()
-
+def read_text():
+    capture_image()
     
     prompt = [
        "You are an expert admin people who will extract core information from documents",
@@ -70,7 +59,7 @@ def extract_structured_data():
 
 
 def describe_surrounding():
-    get_frame_from_receive_frames()
+    capture_image()
 
     
     prompt = [
@@ -83,24 +72,6 @@ def describe_surrounding():
     ]
     
     results = model.generate_content(prompt)
-    return results.txt
+    return results.text
 
-
-
-
-@router.get("/read")
-def message():
-    result = extract_structured_data()
-    return result
-    return StreamingResponse(gnerate_audio(result), media_type="audio/mpeg")
-
-@router.get("/describe")
-def describe_surrounding():
-    result = describe_surrounding()
-    return result
-    return StreamingResponse(gnerate_audio(result), media_type="audio/mpeg")
-
-@router.get("fdescribe")
-def describe_surrounding_faster():
-    return FileResponse("/audio/general_surrounding.mp3")
 
