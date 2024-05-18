@@ -48,7 +48,24 @@ def capture_image():
           cv2.imwrite('output.jpg', frame)
           break
 
+def capture_image_with_pc_camera():
+    save_path = "output.jpg"
+    cap = cv2.VideoCapture(0)
 
+    if not cap.isOpened():
+        print("Error: Could not open camera.")
+        return
+
+    ret, frame = cap.read()
+
+    if ret:
+        cv2.imwrite(save_path, frame)
+        print(f"Image captured and saved as {save_path}")
+    else:
+        print("Error: Could not read frame from camera.")
+
+    cap.release()
+   
 
 
 
