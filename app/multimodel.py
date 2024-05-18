@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 import google.generativeai as genai
 from dotenv import load_dotenv
-from app.utility import capture_image
+from app.utility import capture_image, capture_image_with_pc_camera
 
 load_dotenv()
 
@@ -43,7 +43,8 @@ model = genai.GenerativeModel(model_name="gemini-1.0-pro-vision-latest",
 
 
 def read_image():
-    capture_image()
+    # capture_image()
+    capture_image_with_pc_camera()
     
     prompt = [
        "You are an expert admin people who will extract core information from documents",
@@ -59,7 +60,8 @@ def read_image():
 
 
 def describe_surrounding():
-    capture_image()
+    # capture_image()
+    capture_image_with_pc_camera()
 
     
     prompt = [
@@ -75,3 +77,6 @@ def describe_surrounding():
     return results.text
 
 
+# Note i see i have to comment the changes when i have to switch from the camera_module or simple pc camera
+# so this can be done through dependencies injection design pattern in the code
+# so we need to switch all of this code to class for dependencies have to follow depencies injection techique 
