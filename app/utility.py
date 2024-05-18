@@ -50,6 +50,8 @@ def capture_image():
 
 
 
+
+
 def location_with_ip_address() -> tuple[str, list[float]]:
   """
   Retrieves the location and latitude/longitude coordinates based on the IP address of the user.

@@ -1,9 +1,11 @@
 import cv2
 import numpy as np
-import requests
 import threading
 import time
+import sys
+import os
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from app.utility import generate_audio, play_audio
 
 
@@ -27,9 +29,8 @@ KNOWN_WIDTHS = {
 
 
 
-class Detector:
-    def __init__(self, server_address, configPath, modelPath, classesPath, focalLength):
-        self.server_address = server_address
+class SimpleDetector:
+    def __init__(self,  configPath, modelPath, classesPath, focalLength):
         self.configPath = configPath
         self.modelPath = modelPath
         self.classesPath = classesPath
@@ -43,7 +44,6 @@ class Detector:
         self.net.setInputSwapRB(True)
 
         self.readClasses()
-        self.stop_event = threading.Event()
 
         self.objects_within_distance = {}  # Dictionary to store objects within distance
 
@@ -71,25 +71,19 @@ class Detector:
     def distance_to_camera(self, known_width, per_width, focal_Length):
         return (known_width * focal_Length) / per_width
 
-    def receive_frames(self):
-        stream = requests.get(self.server_address, stream=True)
-        bytes_received = bytes()
-        for chunk in stream.iter_content(chunk_size=1024):
-            bytes_received += chunk
-            a = bytes_received.find(b'\xff\xd8') # JPEG start marker
-            b = bytes_received.find(b'\xff\xd9') # JPEG end marker
-            if a != -1 and b != -1:
-                jpg = bytes_received[a:b+2]
-                bytes_received = bytes_received[b+2:]
-                frame = cv2.imdecode(np.frombuffer(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
-                yield frame
-
+    
     def process_frames(self):
-        for frame in self.receive_frames():
+        cap = cv2.VideoCapture(0)  # Open default camera
+
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+
             classLabelIDs, confidences, bboxs = self.net.detect(frame, confThreshold=0.4)
 
             bboxs = list(bboxs)
-            confidences = list(np.array(confidences).reshape(1,-1)[0])
+            confidences = list(np.array(confidences).reshape(1, -1)[0])
             confidences = list(map(float, confidences))
 
             bboxIdx = cv2.dnn.NMSBoxes(bboxs, confidences, score_threshold=0.55, nms_threshold=0.2)
@@ -97,7 +91,7 @@ class Detector:
             current_time = time.time()
 
             if len(bboxIdx) != 0:
-                for i in range(0, len(bboxIdx)):
+                for i in range(len(bboxIdx)):
                     bbox = bboxs[np.squeeze(bboxIdx[i])]
                     classConfidence = confidences[np.squeeze(bboxIdx[i])]
                     classLabelID = np.squeeze(classLabelIDs[np.squeeze(bboxIdx[i])])
@@ -111,14 +105,13 @@ class Detector:
 
                     if classLabel in KNOWN_WIDTHS:
                         width = w
-                        distance = self.distance_to_camera(KNOWN_WIDTHS[classLabel], width, focal_Length=self.focalLength)
+                        distance = self.distance_to_camera(KNOWN_WIDTHS[classLabel], width, self.focalLength)
                         distance_text = "Distance: {:.2f}m".format(distance)
                         if distance < 1:
                             if classLabelID not in self.objects_within_distance:
                                 self.objects_within_distance[classLabelID] = current_time
                                 print(f"New object detected: {classLabel}")
                                 self.new_process_song(f"alert from {classLabel}")
-
                             else:
                                 if current_time - self.objects_within_distance[classLabelID] >= 1:
                                     self.objects_within_distance[classLabelID] = current_time
@@ -135,13 +128,8 @@ class Detector:
             cv2.imshow("Result", frame)
 
             key = cv2.waitKey(1) & 0xFF
-            if key == ord("q") or self.stop_event.is_set():
+            if key == ord("q") :
                 break
 
+        cap.release()
         cv2.destroyAllWindows()
-
-    def start_processing(self):
-        threading.Thread(target=self.process_frames, daemon=True).start()
-
-    def stop_processing(self):
-        self.stop_event.set()
