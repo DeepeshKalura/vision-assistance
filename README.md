@@ -1,5 +1,19 @@
 ## Visual Assistance
+
+<table>
+<tr>
+    <td>
+      <img src="images/picture/sideView.JPG" alt="side view" width="200"/>
+    </td>
+    <td>
+      <img src="images/picture/upperView.JPG" alt="Tips" width="200"/>
+    </td>
+  </tr>
+
+</table>
+
 This is a voice-activated visual assistance application that uses speech recognition and object detection to provide help in various situations. The application listens for specific keywords and performs actions accordingly. It can describe the surroundings, send help messages, and more.
+
 
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
