@@ -21,8 +21,8 @@ def help_sms():
     message = client.messages \
         .create(
             body=sms,
-            from_='+17176743364',
-            to='+916280823503'
+            from_='+19362792297',
+            to='+919897948055'
         )
 
     if (message.sid != None):
