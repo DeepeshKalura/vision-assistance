@@ -20,8 +20,8 @@ def main():
         try:
             with sr.Microphone() as mic:
                 print("Say something!...") 
-                audio = r.listen(source=mic, phrase_time_limit=2 ) # Time out is giving
-                result = r.recognize_azure(audio_data=audio, key=os.getenv("AZURE_API_KEY"), language='en-US', location="eastus", profanity="masked")
+                audio = r.listen(source=mic, phrase_time_limit=2 ) 
+                result = r.recognize_azure(audio_data=audio, key=os.getenv("AZURE_API_KEY"), language='en-US', location="centralus", profanity="masked")
                 print(result)
                 text = result[0]
                 if "start" in text.lower():
@@ -34,7 +34,7 @@ def main():
 
                 if "describe" in text.lower():
                     print("describe keyword detected. Stop Audio streaming...")
-                    # code written by saniya 
+                    #! code written by saniya 
                     result = describe_surrounding()
                     generate_audio(result, str(number)+".mp3")
                     play_audio(str(number)+".mp3")
