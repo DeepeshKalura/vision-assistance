@@ -1,3 +1,5 @@
+This project is no longer maintained!! You can use it to create good hackathon projects, but we updated the code to live server, which is better than manually using and hot keywords detections.
+
 ## Visual Assistance
 
 <table>
